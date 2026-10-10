@@ -27,6 +27,7 @@
             max-width: 500px;
             text-align: center;
             margin-bottom: 20px;
+            box-sizing: border-box;
         }
         h1 {
             font-size: 22px;
@@ -55,17 +56,38 @@
             outline: none;
             border-color: #d4af37;
         }
-        .output-box {
+        .output-wrapper {
+            position: relative;
             background-color: #2a2a2a;
             border: 1px dashed #555;
             border-radius: 6px;
             padding: 12px;
             min-height: 40px;
+            text-align: left;
+        }
+        .output-box {
             font-family: monospace;
             font-size: 16px;
             color: #d4af37;
             word-break: break-all;
-            text-align: left;
+            padding-right: 70px; /* Espaço para o botão */
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #d4af37;
+            color: #121212;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #e6c547;
         }
     </style>
 </head>
@@ -78,17 +100,23 @@
         <textarea id="inputTexto" placeholder="Ex: Olá mundo" oninput="codificar()"></textarea>
         
         <p style="margin-bottom: 5px; text-align: left; font-size: 12px;">Resultado codificado:</p>
-        <div id="outputCodigo" class="output-box">II:III . II:IX . I:L . I:IX / II:II . II:IX . II:VIII . I:E ...</div>
+        <div class="output-wrapper">
+            <div id="outputCodigo" class="output-box">II:III . II:IX . I:L . I:IX / II:II . II:IX . II:VIII . I:E ...</div>
+            <button class="copy-btn" onclick="copiarTexto('outputCodigo', this)">Copiar</button>
+        </div>
     </div>
 
     <!-- CAIXA 2: DECODIFICAR -->
     <div class="container">
         <h1>🔓 Decodificar (Relógio para Texto)</h1>
-        <p>Cole o código (ex: II:VIII . I:V / ...):</p>
+        <p>Cole o código (ex: II:VIII . I:V / II:I):</p>
         <textarea id="inputCodigo" placeholder="Ex: II:VIII . I:V / II:I" oninput="decodificar()"></textarea>
         
         <p style="margin-bottom: 5px; text-align: left; font-size: 12px;">Resultado traduzido:</p>
-        <div id="outputTextoDecodificado" class="output-box">Aguardando código...</div>
+        <div class="output-wrapper">
+            <div id="outputTextoDecodificado" class="output-box">Aguardando código...</div>
+            <button class="copy-btn" onclick="copiarTexto('outputTextoDecodificado', this)">Copiar</button>
+        </div>
     </div>
 
     <script>
@@ -123,7 +151,10 @@
                 }
             }
             
-            document.getElementById("outputCodigo").innerText = resultado.length > 0 ? resultado.join(" . ").replace(/ \. \/ \. /g, " / ") : "Aguardando texto...";
+            let textoFinal = resultado.length > 0 ? resultado.join(" . ") : "Aguardando texto...";
+            // Limpa espaçamento em volta das barras de espaço
+            textoFinal = textoFinal.replace(/ \. \/ \. /g, " / ");
+            document.getElementById("outputCodigo").innerText = textoFinal;
         }
 
         // Função para Decodificar Relógio -> Texto
@@ -134,7 +165,6 @@
                 return;
             }
 
-            // Normaliza espaços e divisores
             let blocos = codigo.split(/[\.\s]+/);
             let textoFinal = "";
 
@@ -165,6 +195,30 @@
             }
 
             document.getElementById("outputTextoDecodificado").innerText = textoFinal || "Código inválido.";
+        }
+
+        // Função para copiar o texto com feedback visual
+        function copiarTexto(idElemento, botao) {
+            const textoParaCopiar = document.getElementById(idElemento).innerText;
+            
+            if (textoParaCopiar.includes("Aguardando") || textoParaCopiar.includes("inválido")) {
+                return;
+            }
+
+            navigator.clipboard.writeText(textoParaCopiar).then(() => {
+                let textoOriginal = botao.innerText;
+                botao.innerText = "Copiado!";
+                botao.style.backgroundColor = "#4CAF50";
+                botao.style.color = "#fff";
+                
+                setTimeout(() => {
+                    botao.innerText = textoOriginal;
+                    botao.style.backgroundColor = "#d4af37";
+                    botao.style.color = "#121212";
+                }, 1500);
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+            });
         }
     </script>
 
