@@ -6,6 +6,9 @@
     <meta name="google-site-verification" content="18VIPrkEdHl-VvqBFWDzqh2cYbcmxmICrdg2-DTS8fs" />
     <title>Tradutor - Idioma do Tempo (Cronolingua)</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #121212;
@@ -16,33 +19,62 @@
             justify-content: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
         }
+
+        /* BARRA DE NAVEGAÇÃO FIXA NO TOPO */
+        .nav-bar {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            background-color: #2a2a2a;
+            color: #aaa;
+            border: 1px solid #444;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background-color: #d4af37;
+            color: #121212;
+            border-color: #d4af37;
+        }
+
+        /* CONTAINER DAS TELAS */
         .container {
             background-color: #1e1e1e;
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            width: 90%;
+            width: 100%;
             max-width: 500px;
             text-align: center;
             margin-bottom: 20px;
-            box-sizing: border-box;
         }
+
         h1 {
             font-size: 20px;
             color: #d4af37;
-            margin-bottom: 5px;
+            margin-top: 0;
+            margin-bottom: 8px;
         }
         p {
             font-size: 13px;
-            color: #888;
+            color: #aaa;
             margin-bottom: 15px;
             text-align: left;
         }
         textarea {
             width: 100%;
-            height: 70px;
+            height: 80px;
             background-color: #2a2a2a;
             color: #fff;
             border: 1px solid #444;
@@ -50,8 +82,7 @@
             padding: 10px;
             font-size: 15px;
             resize: vertical;
-            box-sizing: border-box;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         textarea:focus {
             outline: none;
@@ -62,48 +93,37 @@
             border: 1px dashed #555;
             border-radius: 6px;
             padding: 12px;
-            min-height: 40px;
+            min-height: 45px;
             font-family: monospace;
             font-size: 16px;
             color: #d4af37;
             word-break: break-all;
             text-align: left;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         .btn-action {
             background-color: #d4af37;
             color: #121212;
             border: none;
-            padding: 8px 14px;
-            font-size: 13px;
+            padding: 12px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s;
             width: 100%;
+            display: block;
         }
         .btn-action:hover {
             background-color: #e6c547;
         }
-        .nav-btn {
-            background-color: #333;
-            color: #d4af37;
-            border: 1px solid #d4af37;
-            margin-bottom: 20px;
-        }
-        .nav-btn:hover {
-            background-color: #444;
-        }
-        /* Seção de Explicativo / Tabela */
-        .tutorial-section {
-            display: none;
-            text-align: left;
-        }
+
+        /* ESTILOS DA TABELA DE EXPLICAÇÃO */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 13px;
+            margin-top: 15px;
+            font-size: 14px;
         }
         th, td {
             border: 1px solid #444;
@@ -118,26 +138,27 @@
 </head>
 <body>
 
-    <!-- BOTÃO DE NAVEGAÇÃO ENTRE TRADUTOR E EXPLICAÇÃO -->
-    <div style="width: 90%; max-width: 500px;">
-        <button id="navBtn" class="btn-action nav-btn" onclick="alternarTela()">📖 Como Funciona? (Ver Tabela)</button>
+    <!-- NAVEGAÇÃO POR ABAS (SEMPRE VISÍVEL NO TOPO) -->
+    <div class="nav-bar">
+        <button id="btnTabTradutor" class="tab-btn active" onclick="mostrarAba('tradutor')">⚙️ Tradutor</button>
+        <button id="btnTabManual" class="tab-btn" onclick="mostrarAba('manual')">📖 Como Funciona?</button>
     </div>
 
     <!-- TELA 1: O TRADUTOR -->
-    <div id="telaTradutor" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div id="abaTradutor" style="width: 100%; max-width: 500px;">
         
-        <!-- CAIXA 1: CODIFICAR -->
+        <!-- CAIXA CODIFICAR -->
         <div class="container">
             <h1>⏳ Codificar (Texto para Relógio)</h1>
             <p>Digite o texto normal (espaços viram barras /):</p>
-            <textarea id="inputTexto" placeholder="Ex: Olá mundo" oninput="codificar()"></textarea>
+            <textarea id="inputTexto" placeholder="Ex: Ola mundo" oninput="codificar()"></textarea>
             
             <p style="margin-bottom: 5px; font-size: 12px;">Resultado codificado:</p>
             <div id="outputCodigo" class="output-box">II:III . II:IX . I:L . I:IX / II:II . II:IX . II:VIII . I:E ...</div>
             <button class="btn-action" onclick="copiarTexto('outputCodigo', this)">📋 Copiar Código</button>
         </div>
 
-        <!-- CAIXA 2: DECODIFICAR -->
+        <!-- CAIXA DECODIFICAR -->
         <div class="container">
             <h1>🔓 Decodificar (Relógio para Texto)</h1>
             <p>Cole o código (ex: II:VIII . I:V / II:I):</p>
@@ -151,14 +172,14 @@
     </div>
 
     <!-- TELA 2: COMO FUNCIONA / TABELA -->
-    <div id="telaTutorial" class="container tutorial-section">
+    <div id="abaManual" class="container" style="display: none; text-align: left;">
         <h1>📜 Manual do Idioma do Tempo</h1>
         <p style="color: #ccc;">Este idioma secreto converte letras do alfabeto usando ciclos de números romanos (os blocos) e as posições de um relógio de 12 horas.</p>
         
         <h3 style="color: #d4af37; margin-top: 15px; font-size: 15px;">Como ler:</h3>
         <p style="color: #ccc; margin-bottom: 10px;">• O número romano indica o bloco da letra.<br>• O número após os dois pontos (:) indica a hora no relógio.<br>• A barra (<strong>/</strong>) representa espaço entre as palavras.</p>
 
-        <h3 style="color: #d4af37; margin-top: 15px; font-size: 15px;">Tabela de Referência:</h3>
+        <h3 style="color: #d4af37; margin-top: 15px; font-size: 15px;">Tabela de Referência Completa:</h3>
         <table>
             <tr>
                 <th>Hora</th>
@@ -182,20 +203,23 @@
     </div>
 
     <script>
-        // Alternar entre o Tradutor e o Manual
-        function alternarTela() {
-            const telaTradutor = document.getElementById("telaTradutor");
-            const telaTutorial = document.getElementById("telaTutorial");
-            const navBtn = document.getElementById("navBtn");
+        // Função para alternar entre as abas
+        function mostrarAba(nomeAba) {
+            const abaTradutor = document.getElementById("abaTradutor");
+            const abaManual = document.getElementById("abaManual");
+            const btnTradutor = document.getElementById("btnTabTradutor");
+            const btnManual = document.getElementById("btnTabManual");
 
-            if (telaTradutor.style.display !== "none") {
-                telaTradutor.style.display = "none";
-                telaTutorial.style.display = "block";
-                navBtn.innerText = "⚙️ Voltar para o Tradutor";
+            if (nomeAba === 'tradutor') {
+                abaTradutor.style.display = "block";
+                abaManual.style.display = "none";
+                btnTradutor.classList.add("active");
+                btnManual.classList.remove("active");
             } else {
-                telaTradutor.style.display = "flex";
-                telaTutorial.style.display = "none";
-                navBtn.innerText = "📖 Como Funciona? (Ver Tabela)";
+                abaTradutor.style.display = "none";
+                abaManual.style.display = "block";
+                btnTradutor.classList.remove("active");
+                btnManual.classList.add("active");
             }
         }
 
@@ -275,7 +299,7 @@
             document.getElementById("outputTextoDecodificado").innerText = textoFinal || "Código inválido.";
         }
 
-        // Função para copiar o texto com feedback visual
+        // Função para copiar o texto
         function copiarTexto(idElemento, botao) {
             const textoParaCopiar = document.getElementById(idElemento).innerText;
             
@@ -285,7 +309,7 @@
 
             navigator.clipboard.writeText(textoParaCopiar).then(() => {
                 let textoOriginal = botao.innerText;
-                botao.innerText = "✨ Copiado com sucesso!";
+                botao.innerText = "✨ Copiado!";
                 botao.style.backgroundColor = "#4CAF50";
                 botao.style.color = "#fff";
                 
